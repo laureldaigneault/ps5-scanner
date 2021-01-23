@@ -19,6 +19,7 @@ let sequenceResumeAt = null;
 let totalCount = 0;
 
 let twilioMessagesSent = {};
+let twilioErrorSent = {};
 
 process.stdin.resume();
 
@@ -102,6 +103,13 @@ async function scanRule(rule) {
             return await page.$eval(selector, ruleFct);
         } catch (error) {
             console.log(`Error occured in rule ${i + 1}`, error);
+
+            // Send notification to mobile device
+            if (!twilioErrorSent[rule.name]) twilioErrorSent[rule.name] = {};
+            if (!twilioErrorSent[rule.name][i]) {
+                sendMessage(`ERROR - An error occured in rule #${i + 1} of ${rule.name}. Please verify!`);
+                twilioErrorSent[rule.name][i] = true;
+            }
             return false;
         }
     }
@@ -121,17 +129,11 @@ async function scanRule(rule) {
 
     if (inStock) {
         console.log(`IN STOCK`.green);
-        // process.stderr.on("\007");
         
         // Send notification to mobile device
         if (!twilioMessagesSent[rule.name]) {
-            twilioClient.messages.create({
-                to: '+14383420756',
-                from: '+16152357080',
-                body: `${rule.name} has PS5 in stock.\n\n${rule.url}`,
-            });
+            sendMessage(`${rule.name} has PS5 in stock.\n\n${rule.url}`)
             twilioMessagesSent[rule.name] = true;
-            console.log('SMS sent')
         }
         notificationSound();
 
@@ -141,6 +143,15 @@ async function scanRule(rule) {
     }
     console.log('\n');
     return inStock;
+}
+
+function sendMessage(message) {
+    twilioClient.messages.create({
+        to: '+14383420756',
+        from: '+16152357080',
+        body: message,
+    });
+    console.log('SMS sent');
 }
 
 async function notificationSound() {
