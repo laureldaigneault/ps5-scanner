@@ -14,7 +14,7 @@ let cooldown = false;
 let tick = 1000;
 let sequenceCount = 0;
 let maxPerSequence = 100;
-let sequenceCooldown = 600000; // ms
+let sequenceCooldown = 0 // 600000; // ms
 let sequenceResumeAt = null;
 let totalCount = 0;
 
@@ -75,13 +75,14 @@ async function scanner() {
                     sequenceCount = 0; // resets cooldown
                     console.log('Resuming...\n\n');
                 }
+                await delay(tick); // for safety
             } else {
                 await scanRule(rulesList[ruleIndex]);
                 sequenceCount++;
                 totalCount++;
                 ruleIndex = (ruleIndex + 1) % (rulesList.length);
+                await delay((Math.random() * tick * 2) + 0.5); // random tick
             }
-            await delay(tick); // for safety
         }
     } 
 }
