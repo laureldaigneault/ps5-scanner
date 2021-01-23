@@ -107,7 +107,7 @@ async function scanRule(rule) {
             // Send notification to mobile device
             if (!twilioErrorSent[rule.name]) twilioErrorSent[rule.name] = {};
             if (!twilioErrorSent[rule.name][i]) {
-                sendMessage(`ERROR - An error occured in rule #${i + 1} of ${rule.name}. Please verify!`);
+                sendMessage(`ERROR - An error occured in rule #${i + 1} of ${rule.name}. Please verify!\n\n${rule.url}`);
                 twilioErrorSent[rule.name][i] = true;
             }
             return false;
