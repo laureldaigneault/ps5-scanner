@@ -11,18 +11,6 @@ const rules = [
             },
         ]
     },
-    // {
-    //     name: "Walmart",
-    //     url: "https://www.walmart.ca/en/ip/playstation5-console/6000202198562",
-    //     rules: [
-    //         {
-    //             selector: '[data-automation="cta-button"]',
-    //             rule: (node) => {
-    //                 return node.textContent === 'Add to cart'
-    //             }
-    //         }
-    //     ]
-    // },
     {
         name: "EB Games",
         url: "https://www.ebgames.ca/PS5/Games/877522",
@@ -42,11 +30,23 @@ const rules = [
             {
                 selector: ".btn-wide",
                 rule: (node) => {
-                    return node.textContent === 'Out of Stock '; // the trailing space is important
+                    return node.textContent !== 'Out of Stock '; // the trailing space is important
                 }
             }
         ]
     },
+    // {
+    //     name: "Walmart",
+    //     url: "https://www.walmart.ca/en/ip/playstation5-console/6000202198562",
+    //     rules: [
+    //         {
+    //             selector: '[data-automation="cta-button"]',
+    //             rule: (node) => {
+    //                 return node.textContent === 'Add to cart'
+    //             }
+    //         }
+    //     ]
+    // },
 ];
 
 module.exports = rules;

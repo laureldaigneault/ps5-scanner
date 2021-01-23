@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 const puppeteer = require('puppeteer');
 const player = require('play-sound')(opts = {})
 const colors = require('colors');
 const twilio = require('twilio');
-const twilioClient = new twilio('AC9c4ae860dec4a95a571e5ce168c8b6e7', 'bda207354b523e798da01829cf4c8df4');
+const twilioClient = new twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
 const rulesList = require('./rules');
 
