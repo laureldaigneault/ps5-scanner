@@ -124,13 +124,13 @@ async function scanRule(rule) {
         
         // Send notification to mobile device
         if (!twilioMessagesSent[rule.name]) {
-            // twilioClient.messages.create({
-            //     to: '+14383420756',
-            //     from: '+16152357080',
-            //     body: `${rule.name} has PS5 in stock.\n\n${rule.url}`,
-            // });
-            // twilioMessagesSent[rule.name] = true;
-            // console.log('SMS sent')
+            twilioClient.messages.create({
+                to: '+14383420756',
+                from: '+16152357080',
+                body: `${rule.name} has PS5 in stock.\n\n${rule.url}`,
+            });
+            twilioMessagesSent[rule.name] = true;
+            console.log('SMS sent')
         }
         notificationSound();
 

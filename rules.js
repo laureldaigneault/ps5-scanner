@@ -30,7 +30,7 @@ const rules = [
             {
                 selector: "#btnAddToCart",
                 rule: (node) => {
-                    return node.style.display === 'none';
+                    return node.style.display !== 'none';
                 }
             }
         ]
