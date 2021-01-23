@@ -6,7 +6,7 @@ const rules = [
             {
                 selector: "#availability span",
                 rule: (node) => {
-                    return ((node.textContent || '').includes('Currently unavailable'));
+                    return !((node.textContent || '').includes('Currently unavailable'));
                 }
             }
         ]
