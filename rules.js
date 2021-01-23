@@ -1,5 +1,17 @@
 const rules = [
     {
+        name: "Amazon",
+        url: "https://www.amazon.ca/PlayStation-5-Console/dp/B08GSC5D9G",
+        rules: [
+            {
+                selector: "#availability span",
+                rule: (node) => {
+                    return !((node.textContent || '').includes('Currently unavailable'));
+                }
+            }
+        ]
+    },
+    {
         name: "Best Buy",
         url: "https://www.bestbuy.ca/en-ca/product/playstation-5-console-online-only/14962185",
         rules: [
