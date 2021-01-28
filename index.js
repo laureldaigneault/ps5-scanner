@@ -89,8 +89,8 @@ async function scanner() {
 }
 
 async function scanRule(rule) {
-    const { name, url, rules } = rule;
-    console.log(` ${name} `.inverse);
+    const { store, product, url, rules } = rule;
+    console.log(` ${store} - ${product} `.inverse);
 
     // Navigate to url
     page.goto(url, { timeout: 0 });
@@ -105,10 +105,10 @@ async function scanRule(rule) {
             console.log(`Error occured in rule ${i + 1}`, error);
 
             // Send notification to mobile device
-            if (!twilioErrorSent[rule.name]) twilioErrorSent[rule.name] = {};
-            if (!twilioErrorSent[rule.name][i]) {
-                sendMessage(`ERROR - An error occured in rule #${i + 1} of ${rule.name}. Please verify!\n\n${rule.url}`);
-                twilioErrorSent[rule.name][i] = true;
+            if (!twilioErrorSent[rule.id]) twilioErrorSent[rule.id] = {};
+            if (!twilioErrorSent[rule.id][i]) {
+                sendMessage(`ERROR - An error occured in rule #${i + 1} of ${rule.store} - ${rule.product}. Please verify!\n\n${rule.url}`);
+                twilioErrorSent[rule.id][i] = true;
             }
             return false;
         }
@@ -131,9 +131,9 @@ async function scanRule(rule) {
         console.log(`IN STOCK`.green);
         
         // Send notification to mobile device
-        if (!twilioMessagesSent[rule.name]) {
-            sendMessage(`${rule.name} has PS5 in stock.\n\n${rule.url}`)
-            twilioMessagesSent[rule.name] = true;
+        if (!twilioMessagesSent[rule.id]) {
+            sendMessage(`${rule.store} has ${rule.product} in stock.\n\n${rule.url}`)
+            twilioMessagesSent[rule.id] = true;
         }
         notificationSound();
 
