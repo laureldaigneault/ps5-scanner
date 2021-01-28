@@ -24,6 +24,8 @@ let twilioErrorSent = {};
 process.stdin.resume();
 
 async function run() {
+    const [ windowed ] = process.argv.slice(2) || [];
+
     const args = [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -38,7 +40,7 @@ async function run() {
     ];
     const options = {
         args,
-        headless: true,
+        headless: windowed == 1 ? false : true,
     };
     
     browser = await puppeteer.launch(options);
@@ -56,36 +58,29 @@ async function run() {
 }
 
 async function scanner() {
-    const [ specificRuleIndex ] = process.argv.slice(2) || [];
-
-    if (!!specificRuleIndex) {
-        await scanRule(rulesList[specificRuleIndex]);
-    }
-    else {
-        let ruleIndex = 0;
-        while (true) {
-            if (cooldown || sequenceCount >= maxPerSequence) {
-                if (!cooldown) {
-                    cooldown = true;
-                    sequenceResumeAt = new Date().getTime() + sequenceCooldown;
-                    console.log('Cooling down...');
-                    console.log(`Resuming in ${Math.round((sequenceResumeAt - new Date().getTime()) / 1000 / 60)} minutes`);
-                };
-                if (sequenceResumeAt && sequenceResumeAt < new Date().getTime()) {
-                    cooldown = false;
-                    sequenceCount = 0; // resets cooldown
-                    console.log('Resuming...\n\n');
-                }
-                await delay(tick); // for safety
-            } else {
-                await scanRule(rulesList[ruleIndex]);
-                sequenceCount++;
-                totalCount++;
-                ruleIndex = (ruleIndex + 1) % (rulesList.length);
-                await delay((Math.random() * tick * 2) + 0.5); // random tick
-            }
-        }
-    } 
+  let ruleIndex = 0;
+  while (true) {
+      if (cooldown || sequenceCount >= maxPerSequence) {
+          if (!cooldown) {
+              cooldown = true;
+              sequenceResumeAt = new Date().getTime() + sequenceCooldown;
+              console.log('Cooling down...');
+              console.log(`Resuming in ${Math.round((sequenceResumeAt - new Date().getTime()) / 1000 / 60)} minutes`);
+          };
+          if (sequenceResumeAt && sequenceResumeAt < new Date().getTime()) {
+              cooldown = false;
+              sequenceCount = 0; // resets cooldown
+              console.log('Resuming...\n\n');
+          }
+          await delay(tick); // for safety
+      } else {
+          await scanRule(rulesList[ruleIndex]);
+          sequenceCount++;
+          totalCount++;
+          ruleIndex = (ruleIndex + 1) % (rulesList.length);
+          await delay((Math.random() * tick * 2) + 0.5); // random tick
+      }
+  }
 }
 
 async function scanRule(rule) {
