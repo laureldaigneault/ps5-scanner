@@ -23,43 +23,57 @@ let twilioErrorSent = {};
 
 process.stdin.resume();
 
+const args = [
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-infobars',
+  "--disable-features=IsolateOrigins,site-per-process",
+  '--window-position=0,0',
+  '--ignore-certifcate-errors',
+  '--ignore-certifcate-errors-spki-list',
+  '--window-size=1400,900',
+  '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36"',
+  '--lang=en,en-US;q=0,5'
+];
+
 async function run() {
     const [ windowed ] = process.argv.slice(2) || [];
-
-    const args = [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-infobars',
-        "--disable-features=IsolateOrigins,site-per-process",
-        '--window-position=0,0',
-        '--ignore-certifcate-errors',
-        '--ignore-certifcate-errors-spki-list',
-        '--window-size=1400,900',
-        '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36"',
-        '--lang=en,en-US;q=0,5'
-    ];
     const options = {
         args,
         headless: windowed == 1 ? false : true,
     };
     
     browser = await puppeteer.launch(options);
-    page = await browser.newPage();
+    // page = await browser.newPage();
 
-    // adding image skip rule
-    await page.setRequestInterception(true);
-    page.on('request', (req) => {
-        if (req.resourceType() === 'image') req.abort();
-        else req.continue();
-    });
+    // // adding image skip rule
+    // await page.setRequestInterception(true);
+    // page.on('request', (req) => {
+    //     if (req.resourceType() === 'image') req.abort();
+    //     else req.continue();
+    // });
 
     console.clear();
     scanner();
 }
 
 async function scanner() {
+  const [ windowed ] = process.argv.slice(2) || [];
+  const options = {
+      args,
+      headless: windowed == 1 ? false : true,
+  };
+  
   let ruleIndex = 0;
   while (true) {
+      browser = await puppeteer.launch(options);
+      page = await browser.newPage();
+      await page.setRequestInterception(true);
+      page.on('request', (req) => {
+          if (req.resourceType() === 'image') req.abort();
+          else req.continue();
+      });
+
       if (cooldown || sequenceCount >= maxPerSequence) {
           if (!cooldown) {
               cooldown = true;
@@ -80,6 +94,10 @@ async function scanner() {
           ruleIndex = (ruleIndex + 1) % (rulesList.length);
           await delay((Math.random() * tick * 2) + 0.5); // random tick
       }
+
+      await delay(1000);
+      await browser.close();
+      await delay(1000);
   }
 }
 
